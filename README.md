@@ -1,7 +1,7 @@
 Class Structure Initializer for Ghidra
 ======================================
 
-Execute when `currentLocation` is the beginning of a recognized Virual Studio vftable (we rely on the auto-generated plate comment).
+Execute when `currentLocation` is the beginning of a recognized Visual Studio vftable (we rely on the auto-generated plate comment).
 
 The script will generate initial structures and updates symbol information. 
 
