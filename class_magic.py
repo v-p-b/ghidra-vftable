@@ -9,6 +9,7 @@ from ghidra.app.util import NamespaceUtils
 from ghidra.program.model.data import Array, CategoryPath, PointerDataType, StructureDataType, DataTypeConflictHandler
 from ghidra.program.model.listing import VariableUtilities, GhidraClass
 from ghidra.program.model.symbol import SourceType
+from java.lang import ArrayIndexOutOfBoundsException
 
 def createVftableType(namespace, length):
     dtm = currentProgram.getDataTypeManager()
@@ -27,11 +28,13 @@ def createClassType(namespace, vftableDataType):
     #structDataType=StructureDataType(CategoryPath(categoryPath), namespace.split('::')[-1], 0)
     p=PointerDataType(vftableDataType)
     structDataType = VariableUtilities.findOrCreateClassStruct(namespace, dtm)
-    if structDataType.getComponent(0):
+    try:
+        structDataType.getComponent(0)
         structDataType.replace(0, p, currentProgram.getDefaultPointerSize(), "fvtable","")
-    else:
+        return structDataType
+    except ArrayIndexOutOfBoundsException:
         structDataType.add(p, currentProgram.getDefaultPointerSize(), "fvtable","")
-    return structDataType
+        return dtm.addDataType(structDataType, DataTypeConflictHandler.REPLACE_HANDLER)
 
 currAddr = currentLocation.getAddress()
 
